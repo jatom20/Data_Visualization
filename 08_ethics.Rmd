@@ -1,0 +1,65 @@
+---
+title: 'Section 08: Ethics'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Complete Section 8.1.2: General Principles on general principles of ethics and Section 8.2: Sensitive Data Viz in our course notes (including all exercises in these sections). Submit these exercises through GitHub by Monday, February 7 at 8:50 am.
+
+8.1 General Ethical Guidelines
+
+8.1.2 Exercises 
+Exercise 1. Pick 1 of the 3 examples (stand your ground, climate change, or covid cases), and summarize why that graphic is not ethical. Make sure to include the context that the graph was created in from Section 8.3 in your explanation.
+
+In the global temperature graph, the National Review tries to disprove climate change in a Tweet, despite climate change being a real issue that will continue to significantly affect the lives of others. Firstly, the National Review uses a misleading scale for the y-axis, which does not show the the actual changes in temperature. Additionally, they grey out the numbers on the y-axis, making it difficult for the audience to see the unhelpful scale. These choices were unethical because the National Review abused their power to try and mislead the audience away from the facts in order to support their own agenda.  
+
+Read the short Section 8.5 of Modern Data Science with R, found here, stopping at Section 8.5.1.
+
+Exercise 2. Choose 2 of the 12 principles of ethical practice of data science and come up a (possibly hypothetical) scenario where each of your two chosen principles would come into play.
+
+**1. Use data to improve life for our users, customers, organizations, and communities** and **12. Help others to understand the most useful and appropriate applications of data to solve real-world problems** 
+
+For example, if I had data showing the correlation between race and pay that could relate to racism, I could create a graphic portrays that the two variables. This could help the people and organization from which the data came from improve the fairness of the workplace and, in turn, their lives (principle 1), helping to solve a real life problem (principle 12). 
+
+
+With any data visualization, we need to think critically about what data is actually being visualized as well as the context that the data came from. Consider the following exercise.
+
+Exercise 3a. Find a graphic on the Internet that shows evidence that the Covid vaccine has “worked.”
+
+first graph in <https://www.businessinsider.com/cdc-charts-show-pfizer-vaccine-works-against-covid-delta-2021-8>
+
+Exercise 3b. Find a graphic on the Internet that shows evidence that the Covid vaccine has “not worked.”
+
+first graph in <https://www.bbc.com/news/world-latin-america-56731801> because shows rise in cases after vaccinations were given
+
+
+8.2 Sensitive Data Visualizations
+Warning: The following section deals with sensitive data on lynchings in the United States. If, at any point, working through these examples is detrimental to your mental health, please stop immediately. You may request an alternative assignment with no explanation necessary.
+
+When visualizing sensitive data, we not only need to consider the context that the data came from, but also we need to critically examine the ramifications of producing the graphic. In particular, if our data points are human beings that were killed, tortured, or mistreated, there is danger in “dehumanizing” these people to single data points.
+
+Consider the following two examples, both of which map lynchings in the United States.
+
+Example 1: First, this chloropleth map shows reported lynchings in the southern United States between 1877 and 1950. Take a few moments to zoom in and out of the map to get a sense about how the data is presented.
+
+Example 2: Second, this map shows similar data but the data is presented as individual points instead of on a chloropleth map. Take a few moments to zoom in and out of the map to get a sense about how the data is presented.
+
+
+Exercise 1. Which of the two visualizations better humanizes the victims of lynching? Why?
+
+The map in Exercise 2 does a better job at humanizing the victimes because instead of just showing the number of lynchings in the area, it shows parts of the victims lives, such as their names, the reasoning behind the lynching, and their location. Although it is not much, it still reminds us that they are people and not just a number on a map. 
+
+Exercise 2. Suppose that you want to humanize the victims more in a static, non-interactive graph. Brainstorm ways that you could achieve this.
+
+One way is to to humanize the victims when you introduce the graph if it is in a presentation or a paper. For example, in the introduction of the graph, you can use a story of one of the victims in order to remind the audience that the statistics on the graph are also real people. I think another important part is the wording of the graph. One should avoid using dehumanizing language in the graph's title or axis names, such as just naming the y-axis "Number of Lynches in 2019", because these are real people who died, not just numbers for the graph. 
+
+Exercise 3. A deeper discussion of these sites appears in this paper. Read the Introduction section on TayTweets and write 3 major takeaways from this section.
+
+One major takeaway is that visual representations are not inherently neutral. Another takeaway is that the choices we make to present the data can either potentially harm others, or challenge hegemonic beliefs within society. Because visualizations are not neutral and the fact that that way one presents data could potentially harm others through racist language, for example, one must be careful in the choices of "representation, interaction, and annotation" and follow ethical visualization practices, which is the last takeaway. 
+
+Exercise 4. The authors of the book Data Feminism argue that “leveraging emotion” might help us better communicate with data. Read the first four paragraphs of Chapter 3 of the Data Feminism book. One example the authors use pertains to deaths from gun violence in the United States. Examine this animated chart. Explain how the chart uses emotion to convey the losses due to gun violence better than, for example, a statement that 11,356 people were killed from gun violence in 2018.
+
+The statement, although still sad and evokes emotion, is essentially just a number. However, the chart evokes emotion by showing the actual lives of the people killed through the use of lines and coloring, and, personally, it evoked a lot more emotion from me than I expected. Even more emotional, the chart shows how the victims could have lived if they were not killed, which really humanizes them and makes the data much more real and tragic. The wording of "Stolen Years" in the right hand corner also evokes emotions because its not only that they died but also that there was so much more life and experiences they could have lived through.
