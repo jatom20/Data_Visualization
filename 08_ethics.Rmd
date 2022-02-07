@@ -7,8 +7,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Complete Section 8.1.2: General Principles on general principles of ethics and Section 8.2: Sensitive Data Viz in our course notes (including all exercises in these sections). Submit these exercises through GitHub by Monday, February 7 at 8:50 am.
-
 8.1 General Ethical Guidelines
 
 8.1.2 Exercises 
