@@ -1,0 +1,47 @@
+---
+title: 'Quiz 03: In Class'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Complete this quiz in a .Rmd file. To turn in the quiz, push both a .Rmd file and a knitted .html file to your GitHub site.
+
+Statement of Integrity: Copy and paste the following statement and then sign your name (by typing it) on the line below.
+
+“All work presented is my own. I have not communicated with or worked with anyone else on this quiz.”
+Jessica Tom
+
+
+
+Question 1 (5 points). Suppose you do the following:
+
+You go to your GitHub site and make a change to the README file (adding a sentence, for example).
+
+In R Studio, you update one of your .Rmd files, adding a line of code and commit the file.
+
+You attempt to push the new file to your GitHub site.
+
+Once you get to the third step, you’ll get an error when you try to push. Why? What do you need to do first before you make the push in Step 3?
+
+You need to update your Readme file in Rstudio, and you need to write a commit message in order for it to be properly commited. 
+
+
+Question 2 (6 points). Give 2 advantages of using Git and GitHub. These must be advantages that we discussed in class (so you should not simply google “advantages of Git” and give the first two things that pop up).
+
+One advantage is that Github makes it easy to collaborate on code because someone can make a change to a project and upload it to Github, where you can pull the file and also work on the same project with your teams' changes. Another advantage is that you can go back to older versions of your files that worked if you find that a new change messed something up. 
+
+
+Question 3 (6 points). Choose 1 of the 12 principles of the ethical practice of data science that you think is the most difficult to execute. Give a short, possibly hypothetical, example that illustrates how that principle could be difficult to follow.
+
+I think, "Present our work in ways that empower others to make better-informed decisions," is difficult to execute. While it may seem straightforward, it is hard to determine ways to present our work in order for others to make decisions based on it.I am just thinking of the Challenger example, in which the engineers did not have any intent to hurt others, but failed to present their data in an adequate way. 
+
+
+Question 4 (6 points). The authors of Data Feminism argued that data scientists should “embrace emotion,” not ignore it when building visuals. State the example that the authors used to show how emotion can be used to make a visual stronger. Then, give an argument against “embracing emotion.” In other words, give an argument that data visualizations should be devoid of emotion as much as possible, even if that’s not what you believe.
+
+Sometimes, in certain situations, you should be objective and emotions can influence the audience towards a certain agenda if you are not careful. For example, with election numbers, you should be careful to be as objective as possible even if you do not agree with the opposite party's agenda. 
+
+
+Question 5 (2 points). These two points are given for committing your .Rmd and .html files with a commit message correctly, and pushing them to your GitHub site.
