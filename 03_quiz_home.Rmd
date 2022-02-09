@@ -1,0 +1,46 @@
+---
+title: 'Quiz 03: Take Home'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Complete this Quiz in a .Rmd file. Submit a .Rmd and a knitted .html file to GitHub by the due date and time.
+
+## Statement of Integrity
+
+**“All work presented is my own, and I have followed all rules for collaboration.”**Jessica Tom
+
+
+
+## Question 1 (5 points). 
+**Consider the Challenger example in our course notes. Clearly, the graphic used to communicate the results is poorly made: it eliminates data points when it really should not. However, the engineers making the graph did not have “malicious intent:” they did not purposefully remove these data points to try to lie: it was a mistake. Is the visualization still unethical? Use principles from the Modern Data Science Readings to explain in a few sentences.**
+
+While the engineers did not have malicious intent, the graph itself is still unethical because it breaks a few of the 12 ethical principles, such as *8. Present our work in ways that empower others to make better-informed decisions*, *9. Consider carefully the ethical implications of choices we make when using data, and the impacts of our work on individuals and society*, and *12. Help others to understand the most useful and appropriate applications of data to solve real-world problems*. All three of these principles emphasize the importance of adequately presenting data so that individuals can make better decisions in real life situations. However, because the engineers left out vital information that could have helped others make the proper adjustments prior to the failed takeoff, the graph is considered unethical.  
+
+
+
+## Question 2 (4 points). 
+**Find a graphic online, other than any given in our course readings, that is unethical. Provide a link to your graphic and give a 2-3 sentence description explaining why that graphic is not ethical.**
+
+**Unethical graphic (<http://static4.businessinsider.com/image/50b62bd3ecad04d36e000004-590-356/fox-news-graph-fail.jpeg>)** compared to this more ethical graph (<http://static5.businessinsider.com/image/50b62b976bb3f70e4c000013-569-421/fox-news-graph-fail.jpeg>)
+
+This graph is unethical because, as shown in the picture linked above, the point locations are not consistent, probably from the range of the y-axis. For example, March's unemployment rate of 8.8 percent is below November's unemployment rate of 8.6 percent, making it appear that the unemployment has increased in November compared to March, even though it had decreased. It is in these ways that the graph displays misleading data to the public, making it unethical.
+
+
+
+## Question 3 (3 points). 
+**Explain, in your own words, what each of the following Git terms mean:**
+
+* *commit* - Commit saves a certain version of the selected files, allowing you to write a message that describes the changes made for that particular "save". However, this function does not automatically put the file on your Github's system.
+
+* *push* - After you commit the files, you usually "push" them. Push actually moves the files onto the Github system. This allows you to store your files with its different changes on your account online.
+
+* *pull* - Pull could be thought of as the opposite as pull and is used to move files from the online Github system to your own personal system in RStudio. It could be useful when collaborating because you can use the updates your team has made (if they are on Github) and continue working with those changes on your own computer after pulling the files. 
+
+
+
+## Question 4 (3 points). 
+**These three points are given if you successfully committed with a commit message and pushed your .Rmd and .html files to your GitHub account**
