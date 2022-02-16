@@ -73,13 +73,32 @@ ggplot(data = state_growth, aes(x = long, y = lat, group = group)) +
 ```
 
 
+6.2 Do We Need a Map?
+The most important take-away from this subsection is:
+
+Just because your data is spatial does not mean the best way to display the data is a map.
+
+Section 7.5 of the data visualization textbook that we used to help conceptualize data visualization principles has a great section on this. Read this section and then answer the following questions.
+
+Exercise 1. Think of a second example where, even though the data is spatial, the best graph to show a particular point would not be a map.
+
+* trends through time
+* relationship between two variables
+
+Exercise 2. Refer back the United States examples that we completed in the earlier section. Choose a variable or two variables where a map makes the most sense to visualize that variable and explain your reasoning. Then, choose a variable or two variables where you might make a plot other than a map and explain your reasoning for why the map makes less sense for this variable.
+
+* examine spatial distribution 
+
+
 6.3 Mapping Other Areas: sf Objects
 ```{r}
+##recreating St. Lawrence County COVID map
 active <- read_csv("https://raw.githubusercontent.com/iramler/stlawu_covid/main/slc_towns_active_cases.csv", n_max = 34)
 tcases <- read_csv("https://raw.githubusercontent.com/iramler/stlawu_covid/main/slc_towns_total_cases.csv", n_max = 34)
 
 active_long <- active %>% pivot_longer(5:ncol(active), names_to = "date",
                                        values_to = "cases")
+
 ## repeat for total cases
 tcases_long <- tcases %>% pivot_longer(5:ncol(tcases), names_to = "date",
                                        values_to = "cases")
@@ -98,28 +117,89 @@ covid_df <- left_join(tcases_long, active_long,
 
 covid_SLC <- covid_df %>% filter(NAME == "St. Lawrence County")
 covid_sub <- covid_df %>% filter(NAME != "St. Lawrence County")
+covid_SLC ##county as a whole
+covid_sub ##subregions 
+
 ## install.packages("sf")
-library(sf)
+library(sf) ##stands for simple features
 shp <- read_sf("data/SLC_Civil_Boundaries_SHP/slc.shp") %>%
-  st_transform(st_crs("+proj=longlat"))
+  st_transform(st_crs("+proj=longlat")) 
+##second pipe = coordinate types; converts to langitude and longitude
+shp
+
 ggplot(data = shp) +
   geom_sf() +
   theme_void()
+
 full_df <- left_join(shp, covid_sub, by = "NAME") %>%
   filter(date == max(date)) ## only plot cases on the most recent date
+
 ggplot(data = full_df) +
   geom_sf(aes(fill = active_cases)) +
-  theme_void()
+  theme_void() +
+  scale_fill_distiller(direction = 1)
+```
+
+6.3 Exercises
+Exercise 1. Make a line plot that shows the number of active_cases in all of St. Lawrence County over time.
+```{r}
+ggplot(data = covid_SLC, aes(x = date, y = active_cases)) +
+  geom_line() 
+```
+
+Exercise 2. Change the fill scale of the plot. Should you use an unordered, sequential, or diverging scale?
+Sequential 
+```{r}
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+  scale_fill_viridis_c()
+```
+
+Exercise 3. Change the colour scale so that active_cases are put into different bins with scale_fill_viridis_b(). What are some advantages and disadvantages of this?
+```{r}
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+  scale_fill_viridis_b()
+
+## change number of bins 
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+  scale_fill_viridis_b(n.breaks = 5)
+```
+
+* advantages = 
+* disadvantages = easier to see differences
+* St. Lawrence County map is 
+
+Exercise 4. Explore the ?geom_sf_text() function and add the actual number of cases to the subregions in the plot, as is done on the SLC website.
+```{r}
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+  scale_fill_distiller(direction = 1) +
+  geom_sf_text(aes(label = active_cases), colour = "black")
+```
+
+
+6.4 Leaflet
+```{r}
 ## install.packages("devtools")
 library(devtools)
 ## devtools::install_github("li-wen-li/uszipcodes")
 library(uszipcodes)
+library(tidyverse)
 beers <- read_csv("data/breweries.csv") 
 raw_zip <- uszipcodes::get_zip(beers$address)
 beers$Zip <- as.integer(uszipcodes::clean_zip(raw_zip))
 
 ## only keep zip, lat, and long
 zip_tab <- zip_table %>% dplyr::select(Zip, Latitude, Longitude)
+zip_tab
+beers
+beer_location
 beer_location <- inner_join(beers, zip_tab)
 content <- beer_location %>%
   mutate(popup = paste0('<a href =', beer_location$website, '>',
@@ -133,4 +213,137 @@ beer_map <- leaflet(beer_location) %>%
   addMarkers(lng = beer_location$Longitude, lat = beer_location$Latitude,
              clusterOptions = markerClusterOptions(),
              popup = content$popup)
+beer_map
 ```
+
+6.4 Exercises
+Exercise 1. Why is inner_join() the most appropriate join function to use here in this example? What observations will an inner_join() get rid of from beers? from zip_tab?
+
+* from beers --> state
+* from zip_tab --> zipcodes with no brewers
+
+Exercise 2. Examine this <http://leaflet-extras.github.io/leaflet-providers/preview/> to look at various “provider” tiles. Choose one to change from Wikimedia and explain how the resulting map looks different.
+```{r}
+beer_map <- leaflet(beer_location) %>%
+  setView(lng = -98.583, lat = 39.833, zoom = 4) %>% 
+  addTiles() %>% 
+  addProviderTiles(providers$Stamen.Watercolor) %>% 
+  addMarkers(lng = beer_location$Longitude, lat = beer_location$Latitude,
+             clusterOptions = markerClusterOptions(),
+             popup = content$popup)
+```
+
+
+
+6.6 Supplementary Exercises
+Consider again the Happy Planet Index data that we worked with in Section 5.2 It may be helpful to reread the description of the data set.
+
+```{r}
+library(tidyverse)
+hpi_df <- read_csv("data/hpi-tidy.csv")
+#> Rows: 151 Columns: 11
+#> ── Column specification ────────────────────────────────────
+#> Delimiter: ","
+#> chr (3): Country, GovernanceRank, Region
+#> dbl (8): HPIRank, LifeExpectancy, Wellbeing, HappyLifeYe...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+Exericse 1. Make a map of a variable of your choosing. In coord_map(), use projection = "mercator", which is also the default (we will see in a later exercise that this probably is not the best choice).
+
+Hint: in ggplot2’s map_data() function, there is a built in map of the "world".
+
+Hint: You can read more about projections in Section 17.3.2 of Modern Data Science with R
+```{r}
+## cannot get colour scale of variable on the map
+library(sf)
+world_df <- ggplot2::map_data("world")
+world_hpi <- left_join(world_df, hpi_df, by = c("region" = "Country"))
+ggplot(data = world_hpi,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(aes(fill = "HPIRank")) +
+  coord_map(projection = "mercator") +
+  theme_void() +
+  scale_fill_viridis_d() 
+```
+
+other attempts
+```{r}
+wrld <- world_df %>%
+  st_transform(st_crs("+proj=longlat"))
+ggplot(data = wrld) +
+  geom_sf() +
+  theme_void()
+
+world_hpi$Footprint <- as.factor(world_hpi$Footprint)
+ggplot(data = world_hpi,
+            mapping = aes(x = long, y = lat,
+                          group = group, fill = value)) +
+  geom_polygon(aes(fill = "Footprint")) +
+  coord_map(projection = "mercator") +
+  theme_void() +
+  scale_fill_viridis_d() 
+
+ggplot(data = world_df,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(data = hpi_df, aes(fill = "Footprint")) +
+  coord_map(projection = "mercator") +
+  theme_void() +
+  scale_fill_viridis_d() 
+
+world_df %>% st_set_geometry(NULL) %>%
+  mutate(my_rate = runif(99))  
+ggplot(world_df) +
+  geom_sf() +
+  coord_map(projection = "mercator") +
+  theme_void()
+```
+
+Exercise 2. You may notice that the United States does not get coloured in your map. Examine this issue further and fix the map so that the United States is coloured.
+
+My United States is coloured on my map. I'm pretty sure that because I was unable to properly do Exercise 1, my map looks completely different than how it should look if I did Exercise 1 correctly.
+
+Exercise 3. You may have noticed that there are two horizontal stripes across your map. This is an issue that drove me nuts! Check out this submitted issue on ggplot2’s GitHub page for the reason for the error as well as a fix. Use it to fix your plot.
+```{r}
+ggplot(data = world_hpi,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(aes(fill = "Footprint")) +
+  coord_map(projection = "mercator", xlim=c(-180,180)) +
+  theme_void() +
+  scale_fill_viridis_d()
+```
+
+Exercise 4. Read about Mercator projections in this blog post. What does this source say about the sizes of Greenland vs. Africa in a Mercator projection.
+
+The blog post says that Greenland is 550% too big and that Africa is too small. Greenland should be able to fit into Africa 14 times.  
+
+Exercise 5. Examine all of the different options for map projection with ?mapproject. Then, change the projection to "globular". Change the projection again to "gilbert". How does the relative size of Greenland to Africa change in the projections?
+```{r}
+ggplot(data = world_hpi,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(aes(fill = "Footprint")) +
+  coord_map(projection = "globular") +
+  theme_void() +
+  scale_fill_viridis_d()
+## "hemisphere is circle, circular arc meridians equally spaced on equator, circular arc parallels equally spaced on 0- and 90-degree meridians"
+## Greenland is much smaller than before Africa and can now fit into Africa multiple times. However, Africa looks like it is the same size. 
+
+ggplot(data = world_hpi,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(aes(fill = "Footprint")) +
+  coord_map(projection = "gilbert") +
+  theme_void() +
+  scale_fill_viridis_d()
+## "sphere conformally mapped on hemisphere and viewed orthographically"
+## Africa looks bigger, while Greenland appears to be slightly smaller than in the Mercator projection. 
+
+```
+
+You can read more about projections in R at this site. There’s definitely a lot going on, and you should always consider what map projection you are using when mapping data, especially if that data is on a global scale!
