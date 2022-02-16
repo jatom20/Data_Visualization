@@ -257,17 +257,15 @@ Hint: in ggplot2’s map_data() function, there is a built in map of the "world"
 
 Hint: You can read more about projections in Section 17.3.2 of Modern Data Science with R
 ```{r}
-## cannot get colour scale of variable on the map
-library(sf)
 world_df <- ggplot2::map_data("world")
 world_hpi <- left_join(world_df, hpi_df, by = c("region" = "Country"))
 ggplot(data = world_hpi,
             mapping = aes(x = long, y = lat,
                           group = group)) +
-  geom_polygon(aes(fill = "HPIRank")) +
+  geom_polygon(colour = "black", aes(fill = HPIRank)) +
   coord_map(projection = "mercator") +
   theme_void() +
-  scale_fill_viridis_d() 
+  scale_fill_viridis_b() 
 ```
 
 other attempts
