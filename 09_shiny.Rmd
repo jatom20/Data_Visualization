@@ -1,0 +1,31 @@
+---
+title: 'Section 09: Shiny'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+9.1 What is shiny?
+Perhaps the easiest way to see what shiny can do is with a couple of examples. First, check out this shiny app that explains some regression concepts.
+
+Exercise 1. What makes the app given in the first tab interactive? In other words, what is a user allowed to change in the app?
+
+In the first tab, the user can change
+* n, the number of points on the graph, or the sample size
+* the y-intercept
+* the slope 
+* Standard Deviation of Residuals
+
+
+Exercise 2. What are the outputs of the app? Are the outputs graphs, tables, or both?
+
+The outputs of the app are both graphs (scatterplot and lollipop) and tables. 
+
+
+Now, examine one of the apps at this r studio shiny gallery.
+
+Exercise 3. Write a short one paragraph description about the app you selected, including what the app allows the user to change, what the output is, and one interesting thing you found in the app.
+
+I chose to explore the "Freedom of Press Index," a data visualization that looks at the countries' freedom of speech via media. The app is split into four slides--the title slide, a map slide, a line graph slide, and an about me slide. Firstly, the viewer can interact with the app through sliding between the different visualizations. In the map slide, the viewer can view the different scores and ranks of the countries' Freedom of Press through the years by adjusting the year. In the line graph slide, the viewer can interact by choosing the country to look at the rank and scores through the years up close. I found it interesting that you can actually type in the country that you want to look at in the line graph slide because the interactive visualizations that we have looked at in this class have mostly been ones that you can hover over to get more information; however, this app allowed for typing, in addition to the hovering interactive feature. 
