@@ -1,0 +1,75 @@
+---
+title: 'Quiz 05: Take-Home'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Complete this Quiz in a .Rmd file. Submit a .Rmd and a knitted .html file to GitHub by the due date and time.
+
+Statement of Integrity: 
+“All work presented is my own, and I have followed all rules for collaboration.” Jessica Tom
+
+Collaboration Reminder: You may work with other students who are in our class on the take-home quiz, but you must list who you worked with at the top of your quiz. Write the name of any student(s) that you collaborated with in the space below this (ignore this if you did not collaborate with any students).
+
+Lily Kasperek
+
+
+Use the STAT 113 survey data set to explore the trend in the popularity of Facebook over time. Do this in 2 ways:
+
+```{r}
+library(tidyverse)
+statsurvey_df <- read_csv("data/stat113_survey.csv")
+```
+
+
+(7 points). Construct a graph that uses the number of Facebook friends each student has.
+```{r}
+statsurvey_fb <- statsurvey_df %>% filter(!is.na(Facebook)) %>% 
+  mutate(time_both = fct_inorder(time_both)) %>% 
+  select(Facebook, everything()) 
+
+statsurvey_avg <- statsurvey_df %>% group_by(time_both) %>% filter(!is.na(Facebook)) %>% 
+  mutate(meanfriends = mean(Facebook, na.rm = TRUE)) %>%
+  ungroup() %>%
+  arrange(meanfriends) %>%
+  mutate(time_both = fct_inorder(time_both))
+
+ggplot(data = statsurvey_fb, aes(x = Facebook, y = time_both)) +
+  geom_point(alpha = 0.4) +
+  geom_point(data = statsurvey_avg, 
+             aes(x = meanfriends, colour = "Mean Facebook Friends")) +
+  scale_colour_manual(values = c("Mean Facebook Friends" = "red")) +
+  labs(x = "Facebook Friends",
+       y = "Semester",
+       colour = " ")
+```
+
+
+
+(7 points). Construct a graph that uses the proportion of students that have Facebook (assuming that 0 friends means that the student does not have a Facebook account and more than 0 friends means that the student does have a Facebook account).
+```{r}
+statsurvey_proportion <- statsurvey_fb %>%
+  mutate(hasFacebook = if_else(Facebook == 0,
+                               true = "No",
+                               false = "Yes")) %>% 
+  group_by(time_both, hasFacebook) %>%
+  summarise(ncount = n()) %>%
+  ungroup() %>%
+  group_by(time_both) %>%
+  mutate(ntotal = sum(ncount)) %>%
+  ungroup() %>%
+  filter(hasFacebook == "Yes") %>%
+  mutate(prop = ncount / ntotal,
+         se = sqrt(prop * (1 - prop) / ntotal),
+         l_se = prop - se,
+         u_se = prop + se)
+  
+ggplot(data = statsurvey_proportion, aes(x = time_both, y = prop)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = l_se, ymax = u_se))
+```
+
+1 point is provided for committing and pushing to GitHub correctly.
