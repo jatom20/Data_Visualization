@@ -1,0 +1,83 @@
+---
+title: 'Quiz 06: Take-Home'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Complete this Quiz in a .Rmd file. Submit a .Rmd and a knitted .html file to GitHub by the due date and time.
+
+Statement of Integrity: “All work presented is my own, and I have followed all rules for collaboration.” Jessica Tom
+
+Collaboration Reminder: You may work with other students who are in our class on the take-home quiz, but you must list who you worked with at the top of your quiz. Write the name of any student(s) that you collaborated with in the space below this (ignore this if you did not collaborate with any students).
+
+
+Lily Kasperek
+
+
+
+Construct a Shiny app for any data set that we have worked with so far (besides SLU Majors and Tennis) or for any data set you used in STAT/DATA 234. Thirteen points will be given for Shiny apps that:
+
+run,
+have at least 2 different inputs,
+have at least 1 plot output that looks presentable (e.g. appropriate labels, colour scale, and makes sense to construct).
+
+Then, write a 2 sentence description about the purpose of your app (2 points).
+
+Note that the in class version of the quiz will prompt you to use an app that has a sidebarLayout(). You do not need to use this function on the take-home quiz, but it may be helpful to use it for extra practice.
+
+```{r}
+library(tidyverse)
+library(shiny)
+
+hpi_df <- read_csv("data/hpi-tidy.csv")
+
+hpi_oneregion <- hpi_df %>% filter(Region == "East Asia") %>%
+  mutate(ordered_country = fct_reorder(.f = Country, .x = LifeExpectancy))
+
+ggplot(data = hpi_oneregion, aes(x = ordered_country, y = LifeExpectancy)) +
+  geom_col(colour = "black", fill = "white", bins = 15) + 
+  coord_flip()
+
+var_choices <- names(hpi_df)[3:8]
+var_choices
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(selectizeInput(inputId = "regionchoice",
+                                label = "Choose a Region",
+                                choices = factor(hpi_df$Region),
+                                selected = "East Asia"),
+                 radioButtons(inputId = "varschoice",
+                              label = "Choose a Variable",
+                              choices = var_choices)
+                 ),
+    mainPanel(plotOutput("histograph"))
+))
+
+server <- function(input, output, session) {
+  
+  hpi_oneregion <- reactive({
+    hpi_df %>% filter(Region == input$regionchoice) %>%
+      mutate(ordered_country = fct_reorder(.f = Country, 
+                                           .x = .data[[input$varschoice]]))
+  })
+  
+  hpi_histogram <- reactive({
+    ggplot(hpi_oneregion(), aes(x = ordered_country, y = .data[[input$varschoice]])) +
+      geom_col(colour = "black", fill = "white", bins = 15) +
+      coord_flip() +
+      labs(x = "Country")
+  })
+  
+  output$histograph <- renderPlot({
+    hpi_histogram()
+  })
+}
+
+shinyApp(ui, server)
+```
+
+For me, the purpose of the app is to provide a data visualization of the Happy Planet Index's select variables across different regions. The app displays a bar graph, allowing viewers to choose between the variables for life expectancy, wellbeing, Happy Life Years, footprint, Happy Planet Index, and population, as well as choose a world region to look at.
