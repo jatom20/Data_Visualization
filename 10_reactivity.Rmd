@@ -1,0 +1,124 @@
+---
+title: "Section 10: Reactivity"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+#> ── Attaching packages ─────────────────── tidyverse 1.3.1 ──
+#> ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+#> ✓ tibble  3.1.2     ✓ dplyr   1.0.7
+#> ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+#> ✓ readr   2.0.2     ✓ forcats 0.5.1
+#> ── Conflicts ────────────────────── tidyverse_conflicts() ──
+#> x dplyr::filter() masks stats::filter()
+#> x dplyr::lag()    masks stats::lag()
+library(lubridate)
+#> 
+#> Attaching package: 'lubridate'
+#> The following objects are masked from 'package:base':
+#> 
+#>     date, intersect, setdiff, union
+weather_df <- read_delim("data/canton_ny_weather_data.txt")
+#> Rows: 804 Columns: 33
+#> ── Column specification ────────────────────────────────────
+#> Delimiter: ","
+#> chr   (6): name, preciptype, conditions, description, ic...
+#> dbl  (24): tempmax, tempmin, temp, feelslikemax, feelsli...
+#> dttm  (2): sunrise, sunset
+#> date  (1): datetime
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+weather_janfeb <- weather_df %>% 
+  mutate(month = month(datetime),
+         year = year(datetime),
+         day = yday(datetime)) %>% 
+  select(month, year, day, everything()) %>%
+  filter(month == 1 | month == 2) %>%
+  mutate(year = factor(year))
+
+ggplot(data = weather_janfeb, aes(x = day, y = tempmin, colour = year)) +
+  geom_line() +
+  scale_color_brewer(palette = "Set2")
+
+library(shiny)
+
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel("")
+  )
+  
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+3.3.6 Exercises
+
+Given this UI:
+```{r}
+library(shiny)
+ui <- fluidPage(
+  textInput("name", "What's your name?"),
+  textOutput("greeting")
+)
+```
+Fix the simple errors found in each of the three server functions below. First try spotting the problem just by reading the code; then run the code to make sure you’ve fixed it.
+```{r}
+server1 <- function(input, output, server) {
+  output$greeting <- renderText(paste0("Hello ", input$name))
+}
+shinyApp(ui, server1)
+
+server2 <- function(input, output, server) {
+  greeting <- reactive(paste0("Hello ", input$name))
+  output$greeting <- renderText(greeting())
+}
+shinyApp(ui, server2)
+
+server3 <- function(input, output, server) {
+  output$greeting <- renderText({paste0("Hello",  input$name)
+  })
+}
+shinyApp(ui, server3)
+```
+
+Draw the reactive graph for the following server functions:
+```{r}
+server1 <- function(input, output, session) {
+  c <- reactive(input$a + input$b)
+  e <- reactive(c() + input$d)
+  output$f <- renderText(e())
+}
+## (a+b) --> c(+d) --> e --> f
+
+server2 <- function(input, output, session) {
+  x <- reactive(input$x1 + input$x2 + input$x3)
+  y <- reactive(input$y1 + input$y2)
+  output$z <- renderText(x() / y())
+}
+## (x1+x2+x3) --> x --> z
+## (y1+y2) --> y --> z
+
+server3 <- function(input, output, session) {
+  d <- reactive(c() ^ input$d)
+  a <- reactive(input$a * 10)
+  c <- reactive(b() / input$c) 
+  b <- reactive(a() + input$b)
+}
+## a --> a()(+b) --> b()(/c) --> c()(^d) --> d() --> (no output)
+## a --> a() --> (no output)
+## a --> a()(+b) --> b()(/c) --> c() --> (no output)
+## a --> a()(+b) --> b() --> (no output)
+```
