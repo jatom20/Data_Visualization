@@ -1,0 +1,147 @@
+---
+title: "Data Visualization Midterm: Take-Home Part 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Mini-Tutorial 4: shiny (20 points)
+
+Topics to Cover:
+
+An Introduction to shiny
+
+An Introduction to Reactivity
+
+You should use a data set other than the data set you chose for the take-home quiz 6.
+
+Make Sure to Include:
+
+(4 points) An introductory statement with the goal of the section (in your own words) and a brief description of the data set and variables you will be using.
+
+(16 points) R code chunks interspersed with some text descriptions about the code you have written and with text description about each topic. At the end of this tutorial, the person reading it should be able to construct a shiny app with real data.
+
+## Overview
+The goal of this section is to create an interactive app through Shiny, as well as to create reactive graphs in order to properly run Shiny. To accomplish this goal, we are using the Stat 113 Survey, which contain a set of various questions for the students of the Stat 113 class. The variables that we will be using are:
+
+* `time_both` - the semester (Fall or Spring) and the year of Stat 113
+* `Facebook` - the number of Facebook friends
+* `Exercise` - the average hours spend exercising per week
+* `Hgt` - height of student
+* `Wgt` - weight of student in pounds
+
+```{r}
+library(tidyverse)
+statsurvey_df <- read_csv("data/stat113_survey.csv")
+```
+
+Step 1: Build a static version of the app you want to create. Typically, to do this, you’ll have to choose particular values for what you want the user of the app to eventually be able to change. We have already completed this step by making the graph for STAT majors.
+
+Step 2: Decide on and set up an input for the User Interface, UI. We will do this as a class.
+
+Step 3: Put the static graph (or table) in the server function.
+
+Step 4: Connect the UI selection input to the server, possibly creating a reactive value. Anything that is reactive must go inside a reactive({}) expression, or a render_({}) expression.
+
+## Shiny
+The first step in creating a Shiny app is to create a static version by choosing a particular variable. In the graph below, we completed this step, using the `Facebook` variable, to create a static graph. 
+```{r}
+statsurvey_fb <- statsurvey_df %>% filter(!is.na(Facebook)) %>% 
+  mutate(time_both = fct_inorder(time_both)) %>% 
+  select(Facebook, everything()) 
+
+ggplot(data = statsurvey_fb, aes(x = Facebook, y = time_both)) +
+  geom_point() 
+```
+
+The next step is to decide on the input in the UI, or the User Interface. We do this by, first, choosing the variables we want. For this example, we will use `Facebook`, `Exercise`, `Hgt`, and `Wgt`, and name these variables `var_choices`. Then we want to create our inputs within `fluidPage()`, in which we will use `radioButtons` for the choice of variable. 
+```{r}
+statsurvey_df2 <- statsurvey_df %>% select(c("time_both", "Facebook", "Exercise", "Hgt", "Wgt"))
+var_choices <- names(statsurvey_df2)[2:5]
+var_choices 
+library(shiny)
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(radioButtons(inputId = "varschoice",
+                              label = "Choose a Variable",
+                              choices = var_choices)
+                 ),
+    mainPanel()
+  )
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Now, we want to move the static graph that we created in the chunk above the previous one into the server function, as shown below. Make sure to rename your plot so it matches the plotOutputin the mainPanel of the fluidPage.
+```{r}
+statsurvey_df2 <- statsurvey_df %>% select(c("time_both", "Facebook", "Exercise", "Hgt", "Wgt"))
+var_choices <- names(statsurvey_df2)[2:5]
+var_choices 
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(radioButtons(inputId = "varschoice",
+                              label = "Choose a Variable",
+                              choices = var_choices)
+                 ),
+    mainPanel(plotOutput("plotsurvey"))
+  )
+)
+
+server <- function(input, output, session) {
+  statsurvey_fb <- statsurvey_df %>% filter(!is.na(Facebook)) %>% 
+    mutate(time_both = fct_inorder(time_both)) %>%
+    select(Facebook, everything()) 
+  
+  plot <- ggplot(data = statsurvey_fb, aes(x = Facebook, y = time_both)) +
+    geom_point() 
+  
+  output$plotsurvey <- renderPlot({
+    plot
+  })
+}
+
+shinyApp(ui, server)
+```
+
+Lastly, we have to create a reactive variable so that the UI section connects to the server function, by changing the Facebook variable to `input$varschoice`. We indicate that something is reactive by putting it within reactive({}). You should be able to change the variable and have the app show its matching graph now.
+```{r}
+statsurvey_df2 <- statsurvey_df %>% select(c("time_both", "Facebook", "Exercise", "Hgt", "Wgt"))
+var_choices <- names(statsurvey_df2)[2:5]
+var_choices 
+library(shiny)
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(radioButtons(inputId = "varschoice",
+                              label = "Choose a Variable",
+                              choices = var_choices)
+                 ),
+    mainPanel(plotOutput("plotsurvey"))
+  )
+)
+
+server <- function(input, output, session) {
+  statsurvey_fb <- reactive({
+    statsurvey_df %>% filter(!is.na(Facebook)) %>%
+    mutate(time_both = fct_inorder(time_both))
+  })
+  
+  plot <- reactive({
+    ggplot(data = statsurvey_fb(), aes(x = .data[[input$varschoice]], y = time_both)) +
+    geom_point()
+  })
+  
+  output$plotsurvey <- renderPlot({
+    plot()
+  })
+}
+
+shinyApp(ui, server)
+```
