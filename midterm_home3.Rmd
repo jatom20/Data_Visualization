@@ -1,0 +1,63 @@
+---
+title: "Data Visualization Midterm: Take-Home Part 3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Mini-Tutorial 3: Expressing Uncertainty (15 points)
+
+Topics to Cover:
+
+Incorporating Data Variability in Graphs
+
+Make sure to include:
+
+(4 points) An introductory statement with the goal of the section (in your own words) and a brief description of the data set and variables you will be using.
+
+(11 points) R code chunks interspersed with some text descriptions about the code you have written and with text description about each topic. For this section, you should actually make a graph (and not simply find an example already online like we looked at for hurricane graphs).
+
+## Overview 
+The goal of the Data Variability section is to depict why showing variability is important to data visualizations. In this section, we will be using the `penguins` data set in the `palmerpenguins` library, which has 344 observations of various penguins. Here are some of the variables we will be using:
+
+* `species` - the type of penguin observed (Adelie, Chinstrap, Gentoo)
+* `bill_length_mm` - the length of the bill in millimeters 
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+```
+
+The bar graph below shows the mean bill length for each of the three penguin species, with Chinstrap penguins having the longest bills on average and Adelie having the shortest on average.
+```{r}
+penguins1 <- penguins %>% filter(!is.na(bill_length_mm))
+penguins_mean <- penguins1 %>% group_by(species) %>%
+  summarize(mean = mean(bill_length_mm)) %>%
+  ungroup() %>%
+  mutate(species_ordered = fct_reorder(.f = species, .x = mean))
+ggplot(data = penguins_mean, aes(x = species_ordered, y = mean)) +
+  geom_col() +
+  coord_flip()
+```
+
+However, that is all it shows--the average bill length. This prevents our data visualization from having any variability within the graph. To fix this, we need to create a different graph. 
+```{r}
+ggplot(data = penguins1, aes(x = bill_length_mm, y = species)) +
+  geom_point() 
+```
+
+This graph shows much more variability within the data set. Although we know that Chinstrap has the longest bill length on average, the Gentoo actually has a data point with its bill length extending beyond any of the Chinstrap penguins. If we did not show the variability, we would not have known this.
+
+If we want to include the averages on the second graph--condensing the graph with the mean bill lengths and the variability graph into one graph--we can add a red dot that represents each species' average bill length. As we learned from Tutorial 1, using a different color from the rest of the data indicates that we are trying to focus on a particular data point. Follow the code below. 
+```{r}
+ggplot(data = penguins1, aes(x = bill_length_mm, y = species)) +
+  geom_point(alpha = 0.4) +
+  geom_point(data = penguins_mean, 
+             aes(x = mean, colour = "Average Bill Length (mm)")) +
+  scale_colour_manual(values = c("Average Bill Length (mm)" = "red")) +
+  labs(x = "Bill Length (mm)",
+       y = "Species",
+       colour = " ")
+```
