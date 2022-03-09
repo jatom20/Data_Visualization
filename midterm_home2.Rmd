@@ -1,0 +1,62 @@
+---
+title: "Data Visualization Midterm: Take-Home Part 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Mini-Tutorial 2: Mapping (15 points)
+
+Topics to Cover:
+
+Either mapping with the maps package OR mapping from a shapefile. Many shapefiles can be found at https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
+Make sure to include:
+
+(4 points) An introductory statement with the goal of the section (in your own words) and a brief description of the data set and variables you will be using.
+
+(11 points) R code chunks interspersed with some text descriptions about the code you have written and with text description about each topic. If you are using the maps package, you should use a map other than the U.S. States Map or World Map that we used in class.
+
+## Overview
+This section aims at showing you the basic functions of mapping with RStudio's leaflet. We will be using `world.cities`, which documents world cities with a population more than 40,000 people, in the `maps` package. With this data set, we will make an interactive map that shows you the cities' name, country, and population. Thus, the important variables are:
+
+* `namme` - name of the city
+* `country.etc` - country that the city is in
+* `population` - population of the city
+
+```{r}
+library(tidyverse)
+library(maps)
+```
+
+## Leaflet
+First, we need to create a map. To do so, we will use leaflet's map options--I chose Esri.WorldTopoMap for this example. We also need to designate where the world cities' longitude and latitude coordinates are in `addMarkers`. This function also allows you to set the markers for the cities in clusters so the viewer can view how many major cities are in each region. `setView` allows you to adjust where the viewer initially starts on the map. In this example, the map initially hovers over the U.S. 
+```{r}
+library(leaflet)
+
+leaflet(world.cities) %>%
+  setView(lng = -98.583, lat = 39.833, zoom = 4) %>% 
+  addTiles() %>% 
+  addProviderTiles(providers$Esri.WorldTopoMap) %>% 
+  addMarkers(lng = world.cities$long, lat = world.cities$lat,
+             clusterOptions = markerClusterOptions())
+```
+
+To add the popup label for the city, country, and population, under `addMarkers` add the desired labels. Follow the formatting of the code below under `popup = paste()`, which indicates the name of the label and where from the data set to get the information. 
+```{r}
+library(leaflet)
+
+leaflet(world.cities) %>%
+  setView(lng = -98.583, lat = 39.833, zoom = 4) %>% 
+  addTiles() %>% 
+  addProviderTiles(providers$Esri.WorldTopoMap) %>% 
+  addMarkers(lng = world.cities$long, lat = world.cities$lat,
+             clusterOptions = markerClusterOptions(),
+             popup = paste("City:", world.cities$name, "<br>",
+                           "Country:", world.cities$country.etc, "<br>",
+                           "Population:", us.cities$pop, "<br>"))
+```
+          
